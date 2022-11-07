@@ -2,6 +2,7 @@
 
 SUBCOMMAND=$1
 
+echo "***SETTING VARIABLES***"
 # Terraform Backend S3 Bucket
 export TF_STATE_BUCKET_NAME='taccoform-tf-backend'
 
@@ -26,6 +27,7 @@ export ENV=$(echo ${SERVICE_PATH#*/workspaces/} | cut -d "/" -f 1)
 # Constructing module path for template files to be listed and rendered
 export TEMPLATE_PATH="${REPO_PATH}/${SERVICE}/modules/${MODULE_NAME}"
 
+
 echo "Module Name:  ${MODULE_NAME}"
 echo "Repo Name:    ${REPO_NAME}"
 echo "Repo Path:    ${REPO_PATH}"
@@ -33,21 +35,25 @@ echo "Service Path: ${SERVICE_PATH}"
 echo "Service:      ${SERVICE}"
 echo "Environment:  ${ENV}"
 echo "Template Path: ${TEMPLATE_PATH}"
+echo ""
 
 
-if [[ $SUBCOMMAND == *"init"* ]]; then
+if [[ $SUBCOMMAND == *"render"* ]]; then
     echo "removing any existing terraform files in current working directory"
+    echo ""
     rm -rf $PWD/*.tf
 
+    echo "***RENDERING TEMPLATE FILES***"
     export TEMPLATE_FILES=$(ls $TEMPLATE_PATH/workspace-templates/*.tf)
 
     for FILE_PATH in $TEMPLATE_FILES; do
         export FILE_NAME=$(basename ${FILE_PATH})
-        echo "File NAME: ${FILE_NAME}"
+        echo "File Name: ${FILE_NAME}"
         envsubst < ${FILE_PATH} | tee ./${FILE_NAME}
+        echo ""
     done
 
-elif [[ $SUBCOMMAND == *"plan"* || $SUBCOMMAND == *"apply"* ]]; then
+elif [[ $SUBCOMMAND == *"init"* || $SUBCOMMAND == *"plan"* || $SUBCOMMAND == *"apply"* ]]; then
     terraform $SUBCOMMAND
 else
     echo "$SUBCOMMAND isn't an available terraform subcommand"
