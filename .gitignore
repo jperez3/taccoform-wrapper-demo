@@ -1,0 +1,4 @@
+.terraform/
+*.tfstate
+
+burrito/workspaces/prod/base/*.tf
