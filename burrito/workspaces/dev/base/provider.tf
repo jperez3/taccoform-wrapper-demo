@@ -7,7 +7,6 @@ terraform {
 
 }
 
-
 provider "aws" {
     region = ""
 
@@ -18,7 +17,6 @@ provider "aws" {
         }
     }
 }
-
 
 terraform {
     required_providers {
